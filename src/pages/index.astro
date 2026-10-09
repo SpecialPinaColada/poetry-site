@@ -12,13 +12,16 @@ try {
   error = e instanceof Error ? e.message : "Could not load poems.";
 }
 
-const tags = [...new Set(poems.flatMap((p) => p.tags.map((t) => t.toLowerCase())))].sort();
-const active = (Astro.url.searchParams.get("tag") ?? "").toLowerCase();
-const shown = active ? poems.filter((p) => p.tags.some((t) => t.toLowerCase() === active)) : poems;
+const norm = (s: string) => s.toLowerCase();
+const tags = [...new Set(poems.flatMap((p) => p.tags.map(norm)))].sort();
+const active = norm(Astro.url.searchParams.get("tag") ?? "");
 
-// Featured poem: the newest one marked `featured: true`, else the newest poem.
-// Hidden while a tag filter is active. It also stays in the list below.
-const feature = active ? undefined : (poems.find((p) => p.featured) ?? poems[0]);
+// Which poems match the tag in the address (used for the first paint; the script takes over after)
+const matches = (p: Entry) => !active || p.tags.some((t) => norm(t) === active);
+const firstVisible = poems.find(matches)?.slug;
+
+// Featured poem: newest one marked `featured: true`, else the newest poem. Always shown.
+const feature = poems.find((p) => p.featured) ?? poems[0];
 
 Astro.response.headers.set(
   "Cache-Control",
@@ -32,7 +35,7 @@ Astro.response.headers.set(
       <p class="notice">{error} Check CONTENT_REPO in site.config.ts and that the repo is public.</p>
     </div>
   )}
-  {!error && shown.length === 0 && (
+  {!error && poems.length === 0 && (
     <div class="column">
       <p class="notice">No poems yet. Add a Markdown file to the poems folder of your content repo.</p>
     </div>
@@ -50,24 +53,35 @@ Astro.response.headers.set(
     </section>
   )}
 
-  {shown.length > 0 && (
+  {poems.length > 0 && (
     <div class="column">
       {tags.length > 0 ? (
         <header class="filter">
           <h1>Filter by:</h1>
-          <nav aria-label="Filter poems">
-            <a href="/" aria-current={active ? undefined : "page"}>All</a>
-            {tags.map((t) => (
-              <a href={`/?tag=${encodeURIComponent(t)}`} aria-current={t === active ? "page" : undefined}>{t}</a>
-            ))}
-          </nav>
+          <div class="filter-scroll">
+            <nav aria-label="Filter poems">
+              <a href="/" data-tag="" aria-current={active ? undefined : "page"}>All</a>
+              {tags.map((t) => (
+                <a href={`/?tag=${encodeURIComponent(t)}`} data-tag={t} aria-current={t === active ? "page" : undefined}>{t}</a>
+              ))}
+            </nav>
+            <button type="button" class="filter-more" aria-label="Show more filters">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </header>
       ) : (
         <header class="filter"><h1>Poems</h1></header>
       )}
 
-      {shown.map((p) => (
-        <article class="item">
+      {poems.map((p) => (
+        <article
+          class:list={["item", { "is-first": p.slug === firstVisible }]}
+          data-tags={p.tags.map(norm).join("|")}
+          hidden={!matches(p)}
+        >
           <span class="label">{p.tags[0] ?? "Poem"}</span>
           <h2 class="item-title"><a href={`/poems/${p.slug}`}>{p.title}</a></h2>
           <p class="excerpt">{p.excerpt}</p>
@@ -76,3 +90,57 @@ Astro.response.headers.set(
     </div>
   )}
 </Layout>
+
+<script>
+  const nav = document.querySelector<HTMLElement>(".filter nav");
+  const wrap = document.querySelector<HTMLElement>(".filter-scroll");
+  const more = document.querySelector<HTMLButtonElement>(".filter-more");
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".filter nav a"));
+  const items = Array.from(document.querySelectorAll<HTMLElement>(".item"));
+
+  function apply(tag: string) {
+    let first = true;
+    for (const el of items) {
+      const show = !tag || (el.dataset.tags ?? "").split("|").includes(tag);
+      el.hidden = !show;
+      el.classList.toggle("is-first", show && first);
+      if (show) first = false;
+    }
+    for (const a of links) {
+      if ((a.dataset.tag ?? "") === tag) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    }
+  }
+
+  // Show the fade and arrow only on the side where more tags are hidden
+  function updateFade() {
+    if (!nav || !wrap) return;
+    const max = nav.scrollWidth - nav.clientWidth;
+    wrap.classList.toggle("can-left", nav.scrollLeft > 2);
+    wrap.classList.toggle("can-right", nav.scrollLeft < max - 2);
+  }
+
+  nav?.addEventListener("scroll", updateFade, { passive: true });
+  window.addEventListener("resize", updateFade);
+  more?.addEventListener("click", () => {
+    nav?.scrollBy({ left: nav.clientWidth * 0.7, behavior: "smooth" });
+  });
+
+  nav?.addEventListener("click", (e) => {
+    const a = (e.target as Element).closest("a");
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    history.pushState({}, "", a.getAttribute("href")!);
+    apply(a.dataset.tag ?? "");
+    a.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  });
+
+  window.addEventListener("popstate", () => {
+    apply((new URL(location.href).searchParams.get("tag") ?? "").toLowerCase());
+  });
+
+  // Start with the selected tag in view, and recalculate once fonts have loaded (they change widths)
+  nav?.querySelector("[aria-current]")?.scrollIntoView({ inline: "nearest", block: "nearest" });
+  updateFade();
+  document.fonts?.ready.then(updateFade);
+</script>
