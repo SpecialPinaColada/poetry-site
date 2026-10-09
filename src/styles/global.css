@@ -146,7 +146,7 @@ main { flex: 1; padding-block: 3rem 2rem; }
 
 .feature {
   display: grid; grid-template-columns: 1.6fr 1fr; align-items: center;
-  padding-block: 7.5rem;                     /* space above and below the section */
+  padding-block: 4.5rem;                     /* space above and below the section */
   margin-bottom: 3rem;
   border-bottom: 1px solid var(--rule);      /* separates it from the list */
 }
