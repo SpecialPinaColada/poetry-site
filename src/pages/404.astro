@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+export const prerender = false;
+---
+
+<Layout title="Not found">
+  <div class="column">
+    <header class="filter"><h1>Poem not found</h1></header>
+    <p class="notice">That poem doesn't exist or has moved. <a href="/">Browse all poems.</a></p>
+  </div>
+</Layout>

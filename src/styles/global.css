@@ -1,0 +1,179 @@
+/* ---------- Themes ----------
+   Each theme defines a light palette and a dark palette ([data-mode="dark"]). */
+
+[data-theme="classic"] {
+  --bg: #ffffff; --fg: #1e1e1e; --muted: #6a6a6a; --accent: #2b7a8c; --rule: #e6e6e6;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --align: left; --justify: flex-start; --title-weight: 400; --filter-weight: 700; --logo-weight: 700;
+  --item-border: none;
+}
+[data-theme="classic"][data-mode="dark"] {
+  --bg: #1a1411; --fg: #eee6dd; --muted: #a89c90; --accent: #6cb8c8; --rule: #3a2f28;
+}
+
+[data-theme="terracotta"] {
+  --bg: #f5ece0; --fg: #2a2018; --muted: #6d5d4f; --accent: #a8452c; --rule: #cfae9f;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Work Sans", system-ui, sans-serif;
+  --align: left; --justify: flex-start; --title-weight: 600; --filter-weight: 600; --logo-weight: 600;
+  --item-border: 1px solid var(--rule);
+}
+[data-theme="terracotta"][data-mode="dark"] {
+  --bg: #1f1814; --fg: #efe3d3; --muted: #b3a392; --accent: #e58a6c; --rule: #44352b;
+}
+
+/* Dark brown by default look: gold on espresso, centered */
+[data-theme="espresso"] {
+  --bg: #f6efe4; --fg: #2a1d14; --muted: #6e5c4c; --accent: #85561a; --rule: #d9c9b3;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --align: center; --justify: center; --title-weight: 400; --filter-weight: 400; --logo-weight: 400;
+  --item-border: none;
+}
+[data-theme="espresso"][data-mode="dark"] {
+  --bg: #1c1410; --fg: #efe4d6; --muted: #b3a291; --accent: #e3b866; --rule: #3e3027;
+}
+
+[data-theme="sage"] {
+  --bg: #edf0e7; --fg: #1f2a22; --muted: #596a5d; --accent: #2f6b4f; --rule: #a9c4b2;
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+  --align: left; --justify: flex-start; --title-weight: 400; --filter-weight: 700; --logo-weight: 700;
+  --item-border: 1px solid var(--rule);
+}
+[data-theme="sage"][data-mode="dark"] {
+  --bg: #131a15; --fg: #e3eadf; --muted: #9fb0a3; --accent: #86c7a2; --rule: #2a3a2f;
+}
+
+/* ---------- Base ---------- */
+
+:root { --max: 62rem; --measure: 38rem; }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+[data-mode="dark"] { color-scheme: dark; }
+
+body {
+  --soft: color-mix(in srgb, var(--fg) 82%, var(--bg));
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
+
+.wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: 1.5rem; }
+main { flex: 1; padding-block: 3rem 2rem; }
+.column { max-width: var(--measure); margin-inline: auto; text-align: var(--align); }
+
+/* ---------- Header + menu ---------- */
+
+.site-header { display: flex; justify-content: space-between; align-items: center; padding-block: 1.75rem; }
+.logo {
+  font-family: var(--font-display);
+  font-weight: var(--logo-weight);
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.15rem;
+}
+.menu { position: relative; }
+.icon-btn {
+  display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
+  border: 0; background: none; color: inherit; cursor: pointer;
+}
+.menu-panel {
+  position: absolute; right: 0; top: calc(100% + 0.5rem); z-index: 10;
+  display: grid; min-width: 13rem; padding: 0.4rem;
+  background: var(--bg); border: 1px solid var(--rule);
+}
+.menu-panel a, .menu-panel button {
+  display: block; width: 100%; padding: 0.6rem 0.8rem; text-align: left;
+  font: inherit; font-size: 0.95rem; color: inherit; background: none; border: 0;
+  text-decoration: none; cursor: pointer;
+}
+.menu-panel a:hover, .menu-panel button:hover { color: var(--accent); }
+
+/* ---------- Home: poem list ---------- */
+
+.filter {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: var(--justify);
+  gap: 0.25rem 1rem; margin-bottom: 2.5rem;
+  font-family: var(--font-display); font-weight: var(--filter-weight);
+  font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.3;
+}
+.filter h1 { font: inherit; margin: 0; }
+.filter nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.filter a { color: var(--muted); text-decoration: none; text-transform: capitalize; }
+.filter a:hover { color: var(--fg); }
+.filter a[aria-current="page"] { color: var(--accent); }
+
+.item { position: relative; padding-block: 2rem; }
+.item:first-of-type { padding-top: 0; }
+.item + .item { border-top: var(--item-border); }
+.label {
+  display: block; margin-bottom: 0.35rem;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent);
+}
+.item-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display); font-weight: var(--title-weight);
+  font-size: clamp(1.75rem, 4.5vw, 2.25rem); line-height: 1.2;
+}
+.item-title a { text-decoration: none; }
+.item-title a::after { content: ""; position: absolute; inset: 0; }
+.item:hover .item-title a { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
+.excerpt { margin: 0; color: var(--soft); line-height: 1.7; }
+.notice { color: var(--muted); }
+
+/* ---------- Poem page ---------- */
+
+.poem-page {
+  display: grid; align-items: start; column-gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure)) minmax(0, 1fr);
+}
+.back, .poem-body, .share { grid-row: 1; }
+.back {
+  grid-column: 1; justify-self: start;
+  display: inline-flex; align-items: center; gap: 0.9rem;
+  font-size: 0.9rem; text-decoration: none;
+}
+.back::before { content: ""; width: 1.75rem; height: 1.5px; background: var(--accent); }
+.poem-body { grid-column: 2; text-align: var(--align); }
+.poem-title {
+  margin: 0 0 2.5rem;
+  font-family: var(--font-display); font-weight: var(--title-weight);
+  font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.15;
+}
+.poem-text { font-size: 1.125rem; }
+.stanza { margin: 0 0 1.75rem; line-height: 1.95; white-space: pre-wrap; tab-size: 4; overflow-wrap: break-word; }
+
+.share { grid-column: 3; justify-self: end; position: sticky; top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.share-btn {
+  display: grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0;
+  border: 1.5px solid var(--accent); border-radius: 50%;
+  color: var(--accent); background: none; cursor: pointer; text-decoration: none;
+}
+.share-btn:hover { background: var(--accent); color: var(--bg); }
+
+@media (max-width: 60rem) {
+  .poem-page { grid-template-columns: minmax(0, 1fr); }
+  .back, .poem-body, .share { grid-column: 1; grid-row: auto; }
+  .back { justify-self: var(--justify); margin-bottom: 2rem; }
+  .share { position: static; flex-direction: row; justify-self: var(--justify); margin-top: 1.5rem; }
+}
+
+/* ---------- Footer: small copyright in the bottom corner ---------- */
+
+.site-footer { padding-block: 1.5rem 1.75rem; font-size: 0.75rem; color: var(--muted); }

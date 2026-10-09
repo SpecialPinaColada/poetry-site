@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getIndex, type Entry } from "../lib/content";
+
+export const prerender = false;
+
+let poems: Entry[] = [];
+let error = "";
+try {
+  poems = await getIndex();
+} catch (e) {
+  error = e instanceof Error ? e.message : "Could not load poems.";
+}
+
+const tags = [...new Set(poems.flatMap((p) => p.tags.map((t) => t.toLowerCase())))].sort();
+const active = (Astro.url.searchParams.get("tag") ?? "").toLowerCase();
+const shown = active ? poems.filter((p) => p.tags.some((t) => t.toLowerCase() === active)) : poems;
+
+Astro.response.headers.set(
+  "Cache-Control",
+  error ? "no-store" : "public, s-maxage=300, stale-while-revalidate=86400"
+);
+---
+
+<Layout>
+  <div class="column">
+    {tags.length > 0 ? (
+      <header class="filter">
+        <h1>Filter by:</h1>
+        <nav aria-label="Filter poems">
+          <a href="/" aria-current={active ? undefined : "page"}>All</a>
+          {tags.map((t) => (
+            <a href={`/?tag=${encodeURIComponent(t)}`} aria-current={t === active ? "page" : undefined}>{t}</a>
+          ))}
+        </nav>
+      </header>
+    ) : (
+      <header class="filter"><h1>Poems</h1></header>
+    )}
+
+    {error && <p class="notice">{error} Check CONTENT_REPO in site.config.ts and that the repo is public.</p>}
+    {!error && shown.length === 0 && (
+      <p class="notice">No poems yet. Add a Markdown file to the poems folder of your content repo.</p>
+    )}
+
+    {shown.map((p) => (
+      <article class="item">
+        <span class="label">{p.tags[0] ?? "Poem"}</span>
+        <h2 class="item-title"><a href={`/poems/${p.slug}`}>{p.title}</a></h2>
+        <p class="excerpt">{p.excerpt}</p>
+      </article>
+    ))}
+  </div>
+</Layout>

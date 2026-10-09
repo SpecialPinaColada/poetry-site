@@ -1,0 +1,74 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPoem, summarize, type Poem } from "../../lib/content";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+let poem: Poem | null = null;
+let failed = false;
+try {
+  poem = slug ? await getPoem(slug) : null;
+} catch {
+  failed = true;
+}
+
+if (failed) return new Response("This poem could not be loaded. Please try again shortly.", { status: 502 });
+if (!poem) return Astro.rewrite("/404");
+
+Astro.response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=86400");
+
+const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(Astro.url.href)}`;
+---
+
+<Layout title={poem.title} description={summarize(poem.stanzas)} type="article">
+  <article class="poem-page">
+    <a class="back" href="/" id="back">Go back</a>
+
+    <div class="poem-body">
+      <span class="label">{poem.tags[0] ?? "Poem"}</span>
+      <h1 class="poem-title">{poem.title}</h1>
+      <div class="poem-text">
+        {poem.stanzas.map((s) => <p class="stanza">{s}</p>)}
+      </div>
+    </div>
+
+    <div class="share">
+      <a class="share-btn" href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+        </svg>
+      </a>
+      <button class="share-btn" id="share-btn" type="button" aria-label="Share this poem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+      </button>
+    </div>
+  </article>
+</Layout>
+
+<script>
+  // "Go back" returns to the previous page (keeps your filter) when it came from this site.
+  const back = document.getElementById("back");
+  back?.addEventListener("click", (e) => {
+    if (document.referrer.startsWith(location.origin) && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+
+  const share = document.getElementById("share-btn");
+  share?.addEventListener("click", async () => {
+    const data = { title: document.title, url: location.href };
+    if (navigator.share) {
+      try { await navigator.share(data); } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        share.setAttribute("aria-label", "Link copied");
+        share.setAttribute("title", "Link copied");
+      } catch {}
+    }
+  });
+</script>

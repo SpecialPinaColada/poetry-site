@@ -1,0 +1,103 @@
+---
+import "../styles/global.css";
+import config from "../../site.config";
+import { themes } from "../lib/themes";
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: "website" | "article";
+}
+
+const { title, description = config.description, type = "website" } = Astro.props;
+const fullTitle = title ? `${title} — ${config.title}` : config.title;
+const origin = config.url || Astro.url.origin;
+const canonical = new URL(Astro.url.pathname, origin).href;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en" data-theme={config.theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={config.title} href="/rss.xml" />
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={themes[config.theme]} />
+
+    <!-- Sets light/dark before first paint so there is no flash -->
+    <script is:inline define:vars={{ defaultMode: config.colorMode }}>
+      var m;
+      try { m = localStorage.getItem("mode"); } catch (e) {}
+      m = m || defaultMode;
+      if (m === "system") m = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.mode = m;
+    </script>
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a class="logo" href="/">{config.title}</a>
+      <div class="menu">
+        <button id="menu-btn" class="icon-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-panel">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M3 6h18M9 12h12M3 18h18" />
+          </svg>
+        </button>
+        <div id="menu-panel" class="menu-panel" hidden>
+          <a href="/">All poems</a>
+          <a href="/rss.xml">RSS feed</a>
+          <button id="mode-toggle" type="button">Switch to dark mode</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <slot />
+    </main>
+
+    <footer class="site-footer wrap">
+      © {year} {config.author}. All rights reserved.
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const menuBtn = document.getElementById("menu-btn") as HTMLButtonElement;
+      const panel = document.getElementById("menu-panel") as HTMLElement;
+      const toggle = document.getElementById("mode-toggle") as HTMLButtonElement;
+
+      function setOpen(open: boolean) {
+        panel.hidden = !open;
+        menuBtn.setAttribute("aria-expanded", String(open));
+      }
+      menuBtn.addEventListener("click", () => setOpen(panel.hidden));
+      document.addEventListener("click", (e) => {
+        if (!panel.hidden && !(e.target as Element).closest(".menu")) setOpen(false);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !panel.hidden) { setOpen(false); menuBtn.focus(); }
+      });
+
+      function updateLabel() {
+        toggle.textContent = root.dataset.mode === "dark" ? "Switch to light mode" : "Switch to dark mode";
+      }
+      toggle.addEventListener("click", () => {
+        const next = root.dataset.mode === "dark" ? "light" : "dark";
+        root.dataset.mode = next;
+        try { localStorage.setItem("mode", next); } catch {}
+        updateLabel();
+      });
+      updateLabel();
+    </script>
+  </body>
+</html>
