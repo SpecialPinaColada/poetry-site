@@ -1,3 +1,9 @@
 {
-	"name": "poetry-site"
+  "name": "poetry-site",
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  }
 }
