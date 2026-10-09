@@ -187,9 +187,9 @@ main { flex: 1; padding-block: 3rem 2rem; }
 .read-more:hover::after { width: 3rem; }
 
 @media (max-width: 60rem) {
-  .feature { grid-template-columns: minmax(0, 1fr); padding-block: 3rem; }
-  .feature-quote { padding: 2rem 0 2.5rem; }
-  .feature-quote::before { font-size: 13rem; }
+  .feature { grid-template-columns: minmax(0, 1fr); padding-block: 0rem; padding-bottom: 4rem; }
+  .feature-quote { padding: 2rem 0 2.5rem; font-size: clamp(1.3rem, 2vw, 1.5rem); line-height: 1.22; }
+  .feature-quote::before { font-size: 13rem; transform: translate(-50%, var(--quote-y, -32%)); }
   .feature-text { padding: 2rem 0 0; border-left: 0; border-top: 1px solid var(--rule); }
 }
 
