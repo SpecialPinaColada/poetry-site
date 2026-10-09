@@ -2,8 +2,8 @@
 export default {
   /** Name shown in the header and the author in the copyright line */
   title: "I.AM.MAD",
-  author: "Your Name",
-  description: "Poems by Your Name.",
+  author: "I.AM.MAD",
+  description: "Poems by I.AM.MAD",
 
   /** Your live site URL, used for canonical links and the RSS feed. Leave "" while developing. */
   url: "",
