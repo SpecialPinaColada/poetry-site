@@ -146,7 +146,7 @@ main { flex: 1; padding-block: 3rem 2rem; }
 
 .feature {
   display: grid; grid-template-columns: 1fr 1fr; align-items: center;
-  padding-block: 6.5rem;                     /* space above and below the section */
+  padding-block: 7.5rem;                     /* space above and below the section */
   margin-bottom: 3rem;
   border-bottom: 1px solid var(--rule);      /* separates it from the list */
 }
@@ -160,8 +160,11 @@ main { flex: 1; padding-block: 3rem 2rem; }
 .feature-quote::before {
   content: "\201C";
   position: absolute; z-index: 0;
-  left: 50%; top: 50%; transform: translate(-50%, -20%);
-  font-size: 52rem; line-height: 1;          /* size of the quotation mark */
+  left: 50%; top: 50%;
+  transform: translate(-50%, var(--quote-y, -25%));
+  font-family: Georgia, "Times New Roman", serif;   /* same shape in every theme */
+  font-weight: 400;
+  font-size: 52rem; line-height: 1;
   color: color-mix(in srgb, var(--accent) 28%, var(--bg));
   pointer-events: none;
 }

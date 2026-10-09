@@ -14,7 +14,7 @@ export default {
    * "espresso"   dark brown page, gold accent, centered
    * "sage"       soft green page, left-aligned
    */
-  theme: "sage" as "classic" | "terracotta" | "espresso" | "sage",
+  theme: "classic" as "classic" | "terracotta" | "espresso" | "sage",
 
   /** "system" follows the visitor's device. Visitors can override it from the menu. */
   colorMode: "system" as "system" | "light" | "dark",
