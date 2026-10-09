@@ -16,6 +16,10 @@ const tags = [...new Set(poems.flatMap((p) => p.tags.map((t) => t.toLowerCase())
 const active = (Astro.url.searchParams.get("tag") ?? "").toLowerCase();
 const shown = active ? poems.filter((p) => p.tags.some((t) => t.toLowerCase() === active)) : poems;
 
+// Featured poem: the newest one marked `featured: true`, else the newest poem.
+// Hidden while a tag filter is active. It also stays in the list below.
+const feature = active ? undefined : (poems.find((p) => p.featured) ?? poems[0]);
+
 Astro.response.headers.set(
   "Cache-Control",
   error ? "no-store" : "public, s-maxage=300, stale-while-revalidate=86400"
@@ -23,32 +27,52 @@ Astro.response.headers.set(
 ---
 
 <Layout>
-  <div class="column">
-    {tags.length > 0 ? (
-      <header class="filter">
-        <h1>Filter by:</h1>
-        <nav aria-label="Filter poems">
-          <a href="/" aria-current={active ? undefined : "page"}>All</a>
-          {tags.map((t) => (
-            <a href={`/?tag=${encodeURIComponent(t)}`} aria-current={t === active ? "page" : undefined}>{t}</a>
-          ))}
-        </nav>
-      </header>
-    ) : (
-      <header class="filter"><h1>Poems</h1></header>
-    )}
-
-    {error && <p class="notice">{error} Check CONTENT_REPO in site.config.ts and that the repo is public.</p>}
-    {!error && shown.length === 0 && (
+  {error && (
+    <div class="column">
+      <p class="notice">{error} Check CONTENT_REPO in site.config.ts and that the repo is public.</p>
+    </div>
+  )}
+  {!error && shown.length === 0 && (
+    <div class="column">
       <p class="notice">No poems yet. Add a Markdown file to the poems folder of your content repo.</p>
-    )}
+    </div>
+  )}
 
-    {shown.map((p) => (
-      <article class="item">
-        <span class="label">{p.tags[0] ?? "Poem"}</span>
-        <h2 class="item-title"><a href={`/poems/${p.slug}`}>{p.title}</a></h2>
-        <p class="excerpt">{p.excerpt}</p>
-      </article>
-    ))}
-  </div>
+  {feature && (
+    <section class="feature" aria-label="Featured poem">
+      <blockquote class="feature-quote"><p>{feature.quote || feature.excerpt}</p></blockquote>
+      <div class="feature-text">
+        <span class="label">{feature.tags[0] ?? "Poem"}</span>
+        <h2 class="feature-title"><a href={`/poems/${feature.slug}`}>{feature.title}</a></h2>
+        <p class="feature-excerpt">{feature.excerpt}</p>
+        <a class="read-more" href={`/poems/${feature.slug}`}>Read more</a>
+      </div>
+    </section>
+  )}
+
+  {shown.length > 0 && (
+    <div class="column">
+      {tags.length > 0 ? (
+        <header class="filter">
+          <h1>Filter by:</h1>
+          <nav aria-label="Filter poems">
+            <a href="/" aria-current={active ? undefined : "page"}>All</a>
+            {tags.map((t) => (
+              <a href={`/?tag=${encodeURIComponent(t)}`} aria-current={t === active ? "page" : undefined}>{t}</a>
+            ))}
+          </nav>
+        </header>
+      ) : (
+        <header class="filter"><h1>Poems</h1></header>
+      )}
+
+      {shown.map((p) => (
+        <article class="item">
+          <span class="label">{p.tags[0] ?? "Poem"}</span>
+          <h2 class="item-title"><a href={`/poems/${p.slug}`}>{p.title}</a></h2>
+          <p class="excerpt">{p.excerpt}</p>
+        </article>
+      ))}
+    </div>
+  )}
 </Layout>

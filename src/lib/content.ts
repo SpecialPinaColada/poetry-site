@@ -11,6 +11,8 @@ const EntrySchema = z.object({
   date: z.string().optional(),
   tags: z.array(z.string()).default([]),
   excerpt: z.string().default(""),
+  featured: z.boolean().default(false),
+  quote: z.string().default(""),
 });
 export type Entry = z.infer<typeof EntrySchema>;
 

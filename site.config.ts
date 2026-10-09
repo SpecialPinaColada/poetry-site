@@ -1,7 +1,7 @@
 // The one file a person edits to make this site theirs.
 export default {
-  /** Name shown in the header and the copyright line */
-  title: "Your Name",
+  /** Name shown in the header and the author in the copyright line */
+  title: "I.AM.MAD",
   author: "Your Name",
   description: "Poems by Your Name.",
 
@@ -14,12 +14,12 @@ export default {
    * "espresso"   dark brown page, gold accent, centered
    * "sage"       soft green page, left-aligned
    */
-  theme: "classic" as "classic" | "terracotta" | "espresso" | "sage",
+  theme: "sage" as "classic" | "terracotta" | "espresso" | "sage",
 
   /** "system" follows the visitor's device. Visitors can override it from the menu. */
   colorMode: "system" as "system" | "light" | "dark",
 
   /** Public GitHub repo holding poems/*.md and index.json */
-  contentRepo: import.meta.env.CONTENT_REPO ?? "your-username/poems",
+  contentRepo: import.meta.env.CONTENT_REPO ?? "specialpinacolada/content-poems",
   contentBranch: import.meta.env.CONTENT_BRANCH ?? "main",
 };

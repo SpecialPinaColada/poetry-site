@@ -9,7 +9,7 @@
   --item-border: none;
 }
 [data-theme="classic"][data-mode="dark"] {
-  --bg: #1a1411; --fg: #eee6dd; --muted: #a89c90; --accent: #6cb8c8; --rule: #3a2f28;
+  --bg: #1a1a1a; --fg: #eee6dd; --muted: #a89c90; --accent: #6cb8c8; --rule: #3a2f28;
 }
 
 [data-theme="terracotta"] {
@@ -30,6 +30,7 @@
   --font-body: "DM Sans", system-ui, sans-serif;
   --align: center; --justify: center; --title-weight: 400; --filter-weight: 400; --logo-weight: 400;
   --item-border: none;
+  --poem-shift: 0;
 }
 [data-theme="espresso"][data-mode="dark"] {
   --bg: #1c1410; --fg: #efe4d6; --muted: #b3a291; --accent: #e3b866; --rule: #3e3027;
@@ -48,7 +49,7 @@
 
 /* ---------- Base ---------- */
 
-:root { --max: 62rem; --measure: 38rem; }
+:root { --max: 62rem; --measure: 38rem; --poem-shift: 0rem; }
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 [data-mode="dark"] { color-scheme: dark; }
@@ -83,9 +84,11 @@ main { flex: 1; padding-block: 3rem 2rem; }
   font-size: 1.15rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  text-decoration: none;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 0.15rem;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.08em;
+  text-decoration-skip-ink: none;
 }
 .menu { position: relative; }
 .icon-btn {
@@ -107,7 +110,9 @@ main { flex: 1; padding-block: 3rem 2rem; }
 /* ---------- Home: poem list ---------- */
 
 .filter {
-  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: var(--justify);
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: flex-start;   /* always left, in every theme */
+  text-align: left;
   gap: 0.25rem 1rem; margin-bottom: 2.5rem;
   font-family: var(--font-display); font-weight: var(--filter-weight);
   font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.3;
@@ -137,6 +142,54 @@ main { flex: 1; padding-block: 3rem 2rem; }
 .excerpt { margin: 0; color: var(--soft); line-height: 1.7; }
 .notice { color: var(--muted); }
 
+/* ---------- Home: featured poem ---------- */
+
+.feature {
+  display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  padding-block: 6.5rem;                     /* space above and below the section */
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--rule);      /* separates it from the list */
+}
+.feature-quote {
+  position: relative; isolation: isolate;    /* keeps the big mark behind the text */
+  margin: 0; padding: 3rem 3rem 3rem 0;
+  text-align: center;
+  font-family: var(--font-display); font-weight: var(--title-weight);
+  font-size: clamp(1.6rem, 3vw, 2.5rem); line-height: 1.22;
+}
+.feature-quote::before {
+  content: "\201C";
+  position: absolute; z-index: 0;
+  left: 50%; top: 50%; transform: translate(-50%, -20%);
+  font-size: 52rem; line-height: 1;          /* size of the quotation mark */
+  color: color-mix(in srgb, var(--accent) 28%, var(--bg));
+  pointer-events: none;
+}
+.feature-quote p { position: relative; z-index: 1; margin: 0; }
+
+.feature-text { padding-left: 3rem; border-left: 1px solid var(--rule); text-align: left; }
+.feature-title {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-display); font-weight: var(--title-weight);
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem); line-height: 1.15;
+}
+.feature-title a { text-decoration: none; }
+.feature-excerpt { margin: 0 0 2rem; color: var(--soft); line-height: 1.9; }
+
+.read-more {
+  display: inline-flex; align-items: center; gap: 0.9rem;
+  font-size: 0.9rem; text-decoration: none;
+}
+.read-more::after { content: ""; width: 2rem; height: 2px; background: var(--accent); transition: width 0.2s; }
+.read-more:hover::after { width: 3rem; }
+
+@media (max-width: 60rem) {
+  .feature { grid-template-columns: minmax(0, 1fr); padding-block: 3rem; }
+  .feature-quote { padding: 2rem 0 2.5rem; }
+  .feature-quote::before { font-size: 13rem; }
+  .feature-text { padding: 2rem 0 0; border-left: 0; border-top: 1px solid var(--rule); }
+}
+
 /* ---------- Poem page ---------- */
 
 .poem-page {
@@ -146,13 +199,18 @@ main { flex: 1; padding-block: 3rem 2rem; }
 .back, .poem-body, .share { grid-row: 1; }
 .back {
   grid-column: 1; justify-self: start;
+  align-self: baseline;              /* sits on the same line as the tag label */
   display: inline-flex; align-items: center; gap: 0.9rem;
   font-size: 0.9rem; text-decoration: none;
 }
 .back::before { content: ""; width: 1.75rem; height: 1.5px; background: var(--accent); }
-.poem-body { grid-column: 2; text-align: var(--align); }
+.poem-body {
+  grid-column: 2; text-align: var(--align);
+  align-self: baseline;              /* its first line is the tag label */
+  margin-left: var(--poem-shift);    /* moves the poem right */
+}
 .poem-title {
-  margin: 0 0 2.5rem;
+  margin: 1rem 0 2rem;
   font-family: var(--font-display); font-weight: var(--title-weight);
   font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.15;
 }
@@ -172,6 +230,7 @@ main { flex: 1; padding-block: 3rem 2rem; }
   .back, .poem-body, .share { grid-column: 1; grid-row: auto; }
   .back { justify-self: var(--justify); margin-bottom: 2rem; }
   .share { position: static; flex-direction: row; justify-self: var(--justify); margin-top: 1.5rem; }
+  .poem-body { margin-left: 2rem; }
 }
 
 /* ---------- Footer: small copyright in the bottom corner ---------- */
