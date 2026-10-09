@@ -2,7 +2,7 @@
    Each theme defines a light palette and a dark palette ([data-mode="dark"]). */
 
 [data-theme="classic"] {
-  --bg: rgb(215, 222, 230); --fg: #1e1e1e; --muted: #6a6a6a; --accent: #2b7a8c; --rule: #adaeae;
+  --bg: #d7dee6; --fg: #1e1e1e; --muted: #6a6a6a; --accent: #2b7a8c; --rule: #adaeae;
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Source Sans 3", system-ui, sans-serif;
   --align: left; --justify: flex-start; --title-weight: 400; --filter-weight: 700; --logo-weight: 700;
