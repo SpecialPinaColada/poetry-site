@@ -2,7 +2,7 @@
    Each theme defines a light palette and a dark palette ([data-mode="dark"]). */
 
 [data-theme="classic"] {
-  --bg: #ffffff; --fg: #1e1e1e; --muted: #6a6a6a; --accent: #2b7a8c; --rule: #e6e6e6;
+  --bg: rgb(215, 222, 230); --fg: #1e1e1e; --muted: #6a6a6a; --accent: #2b7a8c; --rule: #adaeae;
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Source Sans 3", system-ui, sans-serif;
   --align: left; --justify: flex-start; --title-weight: 400; --filter-weight: 700; --logo-weight: 700;
@@ -145,17 +145,17 @@ main { flex: 1; padding-block: 3rem 2rem; }
 /* ---------- Home: featured poem ---------- */
 
 .feature {
-  display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  display: grid; grid-template-columns: 1.6fr 1fr; align-items: center;
   padding-block: 7.5rem;                     /* space above and below the section */
   margin-bottom: 3rem;
   border-bottom: 1px solid var(--rule);      /* separates it from the list */
 }
 .feature-quote {
   position: relative; isolation: isolate;    /* keeps the big mark behind the text */
-  margin: 0; padding: 3rem 3rem 3rem 0;
+  margin: 0; padding: 3rem 1rem 3rem 0;
   text-align: center;
   font-family: var(--font-display); font-weight: var(--title-weight);
-  font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.22;
+  font-size: clamp(1rem, 2vw, 1.8rem); line-height: 1.22;
 }
 .feature-quote::before {
   content: "\201C";
@@ -165,10 +165,10 @@ main { flex: 1; padding-block: 3rem 2rem; }
   font-family: Georgia, "Times New Roman", serif;   /* same shape in every theme */
   font-weight: 400;
   font-size: 52rem; line-height: 1;
-  color: color-mix(in srgb, var(--accent) 28%, var(--bg));
+  color: color-mix(in srgb, var(--accent) 15%, var(--bg));
   pointer-events: none;
 }
-.feature-quote p { position: relative; z-index: 1; margin: 0; }
+.feature-quote p { position: relative; z-index: 1; margin: 0; white-space: pre-line; }
 
 .feature-text { padding-left: 3rem; border-left: 1px solid var(--rule); text-align: left; }
 .feature-title {
@@ -177,7 +177,7 @@ main { flex: 1; padding-block: 3rem 2rem; }
   font-size: clamp(1.9rem, 3.4vw, 2.75rem); line-height: 1.15;
 }
 .feature-title a { text-decoration: none; }
-.feature-excerpt { margin: 0 0 2rem; color: var(--soft); line-height: 1.9; }
+.feature-excerpt { margin: 0 0 2rem; color: var(--soft); line-height: 1.9; white-space: pre-line; }
 
 .read-more {
   display: inline-flex; align-items: center; gap: 0.9rem;
