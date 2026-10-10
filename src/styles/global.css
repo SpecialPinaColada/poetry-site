@@ -126,6 +126,7 @@ main { flex: 1; padding-block: 3rem 2rem; }
 .filter-scroll.can-right { --fade-r: 3.5rem; }
 
 .filter nav {
+  position: relative;
   display: flex; flex-wrap: nowrap; gap: 1rem;
   overflow-x: auto; overscroll-behavior-x: contain;
   scrollbar-width: none; -ms-overflow-style: none;

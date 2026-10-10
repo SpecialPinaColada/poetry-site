@@ -98,6 +98,12 @@ Astro.response.headers.set(
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".filter nav a"));
   const items = Array.from(document.querySelectorAll<HTMLElement>(".item"));
 
+  function centerTag(a: HTMLElement, smooth: boolean) {
+    if (!nav) return;
+    const left = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+    nav.scrollTo({ left: Math.max(0, left), behavior: smooth ? "smooth" : "auto" });
+  }
+
   function apply(tag: string) {
     let first = true;
     for (const el of items) {
@@ -132,7 +138,7 @@ Astro.response.headers.set(
     e.preventDefault();
     history.pushState({}, "", a.getAttribute("href")!);
     apply(a.dataset.tag ?? "");
-    a.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    centerTag(a, true);
   });
 
   window.addEventListener("popstate", () => {
@@ -140,7 +146,6 @@ Astro.response.headers.set(
   });
 
   // Start with the selected tag in view, and recalculate once fonts have loaded (they change widths)
-  nav?.querySelector("[aria-current]")?.scrollIntoView({ inline: "nearest", block: "nearest" });
-  updateFade();
-  document.fonts?.ready.then(updateFade);
+  const current = nav?.querySelector<HTMLElement>("[aria-current]");
+  if (current) centerTag(current, false);
 </script>
