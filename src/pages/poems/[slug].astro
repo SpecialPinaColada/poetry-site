@@ -28,7 +28,8 @@ const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURICompon
     <div class="poem-body">
       <!-- <span class="label">{poem.tags[0] ?? "Poem"}</span> -->
       <span class="label">Poem</span> <!-- Replaces above to keep spacing, but avoid tagging? -->
-      <h1 class="poem-title">{poem.title}</h1>
+      <h1 class:list={["poem-title", { "has-credit": poem.credit }]}>{poem.title}</h1>
+{poem.credit && <p class="poem-credit">{poem.credit}</p>}
       <div class="poem-text">
         {poem.stanzas.map((s) => <p class="stanza">{s}</p>)}
       </div>

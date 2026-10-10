@@ -23,6 +23,7 @@ const FrontmatterSchema = z.object({
   title: z.string().min(1),
   date: z.coerce.string().optional(),
   tags: z.array(z.string()).default([]),
+  credit: z.string().optional(),
 });
 
 export interface Poem {
@@ -30,7 +31,7 @@ export interface Poem {
   title: string;
   date?: string;
   tags: string[];
-  /** Each stanza is a string with its line breaks and indentation intact */
+  credit?: string;
   stanzas: string[];
 }
 
