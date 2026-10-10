@@ -1,9 +1,9 @@
 // The one file a person edits to make this site theirs.
 export default {
   /** Name shown in the header and the author in the copyright line */
-  title: "I.AM.MAD",
-  author: "I.AM.MAD",
-  description: "Poems from I.AM.MAD",
+  title: "Burned",
+  author: "Burned",
+  description: "Poems because sometimes in life you need to vent when you feel BURNED.",
 
   /** Your live site URL, used for canonical links and the RSS feed. Leave "" while developing. */
   url: "",
