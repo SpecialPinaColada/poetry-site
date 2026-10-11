@@ -32,6 +32,9 @@ const year = new Date().getFullYear();
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
 
+    <link rel="icon" href="/favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href={themes[config.theme]} />
@@ -80,7 +83,7 @@ const year = new Date().getFullYear();
         panel.hidden = !open;
         menuBtn.setAttribute("aria-expanded", String(open));
       }
-      menuBtn.addEventListener("click", () => setOpen(panel.hidden));
+      menuBtn.addEventListener("click", () => setOpen(Boolean(panel.hidden)));
       document.addEventListener("click", (e) => {
         if (!panel.hidden && !(e.target as Element).closest(".menu")) setOpen(false);
       });
