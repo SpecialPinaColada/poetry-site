@@ -1,9 +1,9 @@
 // The one file a person edits to make this site theirs.
 export default {
   /** Name shown in the header and the author in the copyright line */
-  title: "Burned",
-  author: "Burned",
-  description: "Poems because sometimes in life you need to vent when you feel BURNED.",
+  title: "Edgar D. Neant",
+  author: "Edgar D. Neant",
+  description: "Poems by Edgar D. Neant.",
 
   /** Your live site URL, used for canonical links and the RSS feed. Leave "" while developing. */
   url: "",
