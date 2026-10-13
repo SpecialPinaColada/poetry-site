@@ -3,11 +3,11 @@ export default {
   /** Name shown in the header and the author in the copyright line */
   title: "Edgar D. Neant",
   author: "Edgar D. Neant",
-  contact: "Comming Soon",
+  contact: "contact@edgarneant.com",
   description: "Poems by Edgar D. Neant.",
 
   /** Your live site URL, used for canonical links and the RSS feed. Leave "" while developing. */
-  url: "",
+  url: "https://poems.edgarneant.com/",
 
   /**
    * "classic"    white page, teal accent, left-aligned
