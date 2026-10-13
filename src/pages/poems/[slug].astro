@@ -16,9 +16,18 @@ try {
 if (failed) return new Response("This poem could not be loaded. Please try again shortly.", { status: 502 });
 if (!poem) return Astro.rewrite("/404");
 
-Astro.response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=86400");
+const written = poem.date
+  ? /^\d{4}-\d{2}-\d{2}$/.test(poem.date)
+    ? {
+        text: new Date(poem.date).toLocaleDateString("en-US", {
+          year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+        }),
+        iso: poem.date,
+      }
+    : { text: poem.date, iso: undefined }
+: null;
 
-const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(Astro.url.href)}`;
+Astro.response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=86400");
 ---
 
 <Layout title={poem.title} description={summarize(poem.stanzas)} type="article">
@@ -28,8 +37,13 @@ const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURICompon
     <div class="poem-body">
       <!-- <span class="label">{poem.tags[0] ?? "Poem"}</span> -->
       <span class="label">Poem</span> <!-- Replaces above to keep spacing, but avoid tagging? -->
-      <h1 class:list={["poem-title", { "has-credit": poem.credit }]}>{poem.title}</h1>
-{poem.credit && <p class="poem-credit">{poem.credit}</p>}
+      <h1 class:list={["poem-title", { "has-meta": Boolean(written || poem.credit) }]}>{poem.title}</h1>
+      {(written || poem.credit) && (
+        <div class="poem-meta">
+          {written && <p class="poem-date"><time datetime={written.iso}>{written.text}</time></p>}
+          {poem.credit && <p class="poem-credit">{poem.credit}</p>}
+        </div>
+      )}
       <div class="poem-text">
         {poem.stanzas.map((s) => <p class="stanza">{s}</p>)}
       </div>
