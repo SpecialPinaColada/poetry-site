@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { getIndex, type Entry } from "../lib/content";
+import config from "../../site.config";
 
 export const prerender = false;
 
@@ -30,9 +31,11 @@ Astro.response.headers.set(
 ---
 
 <Layout>
+  <h1 class="sr-only">Poems by {config.author}</h1>
+  
   {error && (
     <div class="column">
-      <p class="notice">{error} Check CONTENT_REPO in site.config.ts and that the repo is public.</p>
+      <p class="notice">{error} Contact site administration if the problem persists.</p>
     </div>
   )}
   {!error && poems.length === 0 && (
@@ -57,7 +60,8 @@ Astro.response.headers.set(
     <div class="column">
       {tags.length > 0 ? (
         <header class="filter">
-          <h1>Filter by:</h1>
+          <p>Filter by:</p>
+          <p class="sr-only" role="status" id="filter-status"></p>
           <div class="filter-scroll">
             <nav aria-label="Filter poems">
               <a href="/" data-tag="" aria-current={active ? undefined : "page"}>All</a>
@@ -97,25 +101,30 @@ Astro.response.headers.set(
   const more = document.querySelector<HTMLButtonElement>(".filter-more");
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".filter nav a"));
   const items = Array.from(document.querySelectorAll<HTMLElement>(".item"));
+  const status = document.getElementById("filter-status");
+  const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches; 
 
   function centerTag(a: HTMLElement, smooth: boolean) {
     if (!nav) return;
     const left = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
-    nav.scrollTo({ left: Math.max(0, left), behavior: smooth ? "smooth" : "auto" });
+    nav.scrollTo({ left: Math.max(0, left), behavior: smooth && !reduceMotion() ? "smooth" : "auto" });
   }
 
   function apply(tag: string) {
-    let first = true;
+    let first = true, count = 0;
     for (const el of items) {
       const show = !tag || (el.dataset.tags ?? "").split("|").includes(tag);
       el.hidden = !show;
       el.classList.toggle("is-first", show && first);
-      if (show) first = false;
+      if (show) { first = false; count++; }
     }
     for (const a of links) {
       if ((a.dataset.tag ?? "") === tag) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     }
+    if (status) status.textContent = tag
+      ? `Showing ${count} ${count === 1 ? "poem" : "poems"} tagged ${tag}`
+      : `Showing all ${count} poems`;
   }
 
   // Show the fade and arrow only on the side where more tags are hidden
@@ -129,7 +138,7 @@ Astro.response.headers.set(
   nav?.addEventListener("scroll", updateFade, { passive: true });
   window.addEventListener("resize", updateFade);
   more?.addEventListener("click", () => {
-    nav?.scrollBy({ left: nav.clientWidth * 0.7, behavior: "smooth" });
+    nav?.scrollBy({ left: nav.clientWidth * 0.7, behavior: reduceMotion() ? "auto" : "smooth" });
   });
 
   nav?.addEventListener("click", (e) => {
@@ -148,4 +157,10 @@ Astro.response.headers.set(
   // Start with the selected tag in view, and recalculate once fonts have loaded (they change widths)
   const current = nav?.querySelector<HTMLElement>("[aria-current]");
   if (current) centerTag(current, false);
+
+  updateFade();   
+  document.fonts?.ready.then(updateFade);
+  if (nav && "ResizeObserver" in window) {
+    new ResizeObserver(updateFade).observe(nav);
+  }
 </script>

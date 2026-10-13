@@ -1,0 +1,42 @@
+---
+import Layout from "../layouts/Layout.astro";
+import config from "../../site.config";
+export const prerender = false;
+const updated = "October 12, 2026";
+---
+
+<Layout title="Privacy notice" description={`How ${config.title} handles visitor data.`}>
+  <div class="column">
+    <article class="prose">
+      <h1>Privacy notice</h1>
+      <p class="updated">Last updated {updated}</p>
+
+      <h2>Contact</h2>
+      <p>This sites author can be contacted here: <a href={`mailto:${config.contact}`}>{config.contact}</a></p>
+
+      <h2>The short version</h2>
+      <p>This site has no accounts, forms, newsletter, analytics or advertising, and it does not set cookies of its own.</p>
+
+      <h2>What is processed when you visit</h2>
+      <p>Like any website, the servers that deliver this site handle technical information about your visit, such as your IP address, browser type, the page requested and the time. The site is hosted by Cloudflare, which uses this information to deliver the site, keep it secure and prevent abuse. Logs available to me are kept for up to seven days and are used only to fix errors, not to identify or track visitors. Cloudflare may keep network and security data under its own privacy policy. If you are in the UK or EEA, the legal basis is legitimate interests in running a secure website.</p>
+
+      <h2>Your display preference</h2>
+      <p>If you use the light and dark mode switch, your choice is saved in your browser's local storage on your device so the site can remember it. It is not sent to me. You can remove it by clearing this site's data in your browser.</p>
+
+      <h2>Fonts and poems</h2>
+      <p>Fonts and code are served from this site. Poems are retrieved by the site's server from a public GitHub repository, so your browser does not contact GitHub when you read them.</p>
+
+      <h2>Who receives data</h2>
+      <p>Cloudflare, as hosting and delivery provider. Cloudflare operates globally, so data may be processed in countries other than yours.</p>
+
+      <h2>Your rights</h2>
+      <p>Depending on where you live (for example under the UK or EU GDPR, or California law), you may be able to ask what data is held about you, or to have it corrected, deleted or restricted. To do so, the contact email is <a href={`mailto:${config.contact}`}>{config.contact}</a>. You can also complain to your local data protection authority.</p>
+
+      <h2>Audience</h2>
+      <p>This site is directed at adult audiences and may contain mature themes. It does not knowingly collect personal information from anyone, including children.</p>
+
+      <h2>Changes</h2>
+      <p>If the privacy disclosure notice changes, the updated notice and date will appear on this page.</p>
+    </article>
+  </div>
+</Layout>
